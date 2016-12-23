@@ -4,12 +4,12 @@ using System.Collections;
 public class Tile : MonoBehaviour {
 
     // var
-    public bool pressed;            // tile space is pressed or not
-    public bool blankTile;          // if tile is blank
+    public bool pressed;                // tile space is pressed or not
+    public bool blankTile;              // if tile is blank
 
     // get this stuff
-    public Tile tileScript;         // gameObject tile script
-    private GameObject pressedTile; // pressed tile GO
+    public Tile tileScript;             // gameObject tile script
+    private GameObject pressedTile;     // pressed tile GO
     private GameManager gameManager;
 
     // queens
@@ -64,10 +64,11 @@ public class Tile : MonoBehaviour {
                 // movement is legal
                 if (CheckMovement())
                 {
-                    pressed = true;                             // set as pressed
-                    gameManager.currentTile = tileScript;       // set as current tile
-                    gameManager.pressedTiles++;                 // increment pressed tiles ctr
-                    gameManager.CheckWinCondition();            // check for win or loss
+                    pressed = true;                                 // set as pressed
+                    gameManager.lastTile = gameManager.currentTile; // set last tile to current tile
+                    gameManager.currentTile = tileScript;           // set as current tile
+                    gameManager.pressedTiles++;                     // increment pressed tiles ctr
+                    gameManager.CheckWinCondition();                // check for win or loss
                 }
             }
             // nothing has been pressed yet SO IT'S LEGAL

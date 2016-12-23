@@ -1,15 +1,21 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
     private Vector3 tempTouch;
     public ParticleSystem particleCurrentTile;
 
-    public int gameMode;
-    public bool gameOver;
-    public bool gameWon;
-    public bool gameLost;
+    // UI
+    public Text remainingTilesText, pressedTilesText;   // updated in check win condition
+    public Button undoButton;                           // set active or disabled
+
+    public int gameMode;         // selected game mode
+    public bool gameOver;        // game has ended
+    public bool gameWon;         // game won
+    public bool gameLost;        // game lost
 
     public int totalTiles;       // each tile script increments this value on start
     public int pressedTiles;     // incremented on valid tile click
@@ -23,13 +29,18 @@ public class GameManager : MonoBehaviour {
 
 
     public Tile currentTile;
+    public Tile lastTile;
 
 	// Use this for initialization
 	void Start ()
     {
+        // queens
         queen = new Tile[6];
         placedQueens = 0;
         totalQueens = 6;
+
+        // UI
+        undoButton.interactable = false;                            // disable starting undo
 
         gameMode = PlayerPrefs.GetInt("GameMode");                  // set to knight mode for testing
         Debug.Log(gameMode);
@@ -42,6 +53,11 @@ public class GameManager : MonoBehaviour {
 	
 	void Update ()
     {
+        if(lastTile != null)
+        {
+            undoButton.interactable = true;
+        }
+
         // touch stuff that doesn't work yett
         if (Input.touchCount > 0)
         {
@@ -70,14 +86,14 @@ public class GameManager : MonoBehaviour {
         // NOT queen mode..
         if(gameMode != 3)
         {
-            particleCurrentTile.transform.gameObject.SetActive(true);                   // turn on particles
-            particleCurrentTile.transform.position = currentTile.transform.position;    // set particles to current tile
+            MoveParticles();    // move particles to current tile
         }
         
         // knight game mode..
         if (gameMode == 1)
         {
-            remainingTiles = totalTiles - pressedTiles; // update remaining tiles
+            UpdateTileCount();
+
             // pressed all tiles..
             if (pressedTiles == totalTiles)
             {
@@ -169,7 +185,8 @@ public class GameManager : MonoBehaviour {
         // checkers game mode..
         else if(gameMode == 2)
         {
-            remainingTiles = totalTiles - pressedTiles; // update remaining tiles
+            UpdateTileCount();
+
             // pressed all tiles..
             if (pressedTiles == totalTiles)
             {
@@ -340,7 +357,9 @@ public class GameManager : MonoBehaviour {
             int yPosTemp = 1;
             bool wonQueenGame = true;
             //currentQueen = queen[ctrQ];
-            remainingQueens = totalQueens - placedQueens; // update remaining tiles
+            remainingQueens = totalQueens - placedQueens;                       // update remaining tiles
+            pressedTilesText.text = "Pressed tiles: " + placedQueens;           // update pressed tiles text
+            remainingTilesText.text = "Remaining tiles: " + remainingQueens;    // updated remaining tiles text
 
             // ctr is less than total queens and cycling thru
             while (ctrQ < totalQueens)
@@ -470,7 +489,7 @@ public class GameManager : MonoBehaviour {
             // won queen game and all queens are placed..
             if (wonQueenGame && placedQueens == totalQueens)
             {
-                GameOver(true);
+                GameOver(false);
                 return;
             }
         }
@@ -502,5 +521,42 @@ public class GameManager : MonoBehaviour {
             gameWon = true;
             gameLost = false;
         }
+    }
+
+    // update UI tile counts
+    public void UpdateTileCount()
+    {
+        remainingTiles = totalTiles - pressedTiles;                         // update remaining tiles
+        pressedTilesText.text = "Pressed tiles: " + pressedTiles;           // update pressed tiles text
+        remainingTilesText.text = "Remaining tiles: " + remainingTiles;     // updated remaining tiles text
+    }
+
+    // move particles to current tile
+    public void MoveParticles()
+    {
+        particleCurrentTile.transform.gameObject.SetActive(false);                  // turn on particles
+        particleCurrentTile.transform.position = currentTile.transform.position;    // set particles to current tile
+        particleCurrentTile.transform.gameObject.SetActive(true);                   // turn on particles
+    }
+
+    // undo last action (limit one)
+    public void Undo()
+    {
+        if(lastTile != null && currentTile != null)
+        {
+            currentTile.pressed = false;                                                // unpress current tile
+            currentTile = lastTile;                                                     // set current tile to last tile
+            lastTile = null;                                                            // set last tile to null to prevent infinite undos
+            MoveParticles();                                                            // set particles to current tile
+            pressedTiles--;                                                             // decrement pressed tiles
+            UpdateTileCount();                                                          // update UI tile counts
+            undoButton.interactable = false;                                            // disable additional presses
+        }
+    }
+
+    // go to main menu
+    public void MainMenuReturn()
+    {
+        SceneManager.LoadScene(0);
     }
 }

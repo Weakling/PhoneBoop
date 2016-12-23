@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
 
 public class MenuHandler : MonoBehaviour {
 
 
     public GameObject mainMenu, knightsMenu, checkersMenu, queensMenu, aboutMenu;
-    //public Text scoreKnights, scoreCheckers, scoreQueens;
+    public Text scoreKnights, scoreCheckers, scoreQueens;
 
 
 
@@ -30,7 +31,7 @@ public class MenuHandler : MonoBehaviour {
         mainMenu.SetActive(false);
         knightsMenu.SetActive(true);
         PlayerPrefs.SetInt("GameMode", 1);
-        //scoreKnights.text = "High score: " + PlayerPrefs.GetInt("HighScoreKnights", 0).ToString();
+        scoreKnights.text = "High score: " + PlayerPrefs.GetInt("HighScoreKnights", 0).ToString();
     }
 
     public void GameMenuCheckersbtn()
@@ -38,7 +39,7 @@ public class MenuHandler : MonoBehaviour {
         mainMenu.SetActive(false);
         checkersMenu.SetActive(true);
         PlayerPrefs.SetInt("GameMode", 2);
-        //scoreCheckers.text = "High score: " + PlayerPrefs.GetInt("HighScoreCheckers", 0).ToString();
+        scoreCheckers.text = "High score: " + PlayerPrefs.GetInt("HighScoreCheckers", 0).ToString();
     }
 
     public void GameMenuQueensbtn()
@@ -48,11 +49,11 @@ public class MenuHandler : MonoBehaviour {
         PlayerPrefs.SetInt("GameMode", 3);
         if(PlayerPrefs.GetInt("HighScoreQueens", 0) == 0)
         {
-            //scoreQueens.text = "Puzzle solved: no";
+            scoreQueens.text = "Puzzle solved: no";
         }
         else
         {
-            //scoreQueens.text = "Puzzle solved: yes";
+            scoreQueens.text = "Puzzle solved: yes";
         }
     }
 
