@@ -13,8 +13,8 @@ public class LevelManager : MonoBehaviour {
     public static bool isInitializedTiles = false;      // empty tiles initialzed
 
     // arrays
-    private int xCtr = 0;               // array ctr x
-    private int yCtr = 0;               // array ctr y
+    private int xCtr = 0;              // array ctr x
+    private int yCtr = 0;              // array ctr y
     public static int xSizeValue = 6;  // array size x / equals screen length -1
     public static int ySizeValue = 6;  // array size y / equals screen length -1
     public static Tile[,] tileGrid = new Tile[xSizeValue, ySizeValue];

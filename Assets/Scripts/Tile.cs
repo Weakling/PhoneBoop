@@ -12,6 +12,9 @@ public class Tile : MonoBehaviour {
     private GameObject pressedTile; // pressed tile GO
     private GameManager gameManager;
 
+    // queens
+    private int ctrQueenPersonal;
+
     public void Start()
     {
         //
@@ -19,6 +22,7 @@ public class Tile : MonoBehaviour {
         tileScript = GetComponent<Tile>();                          // get gameObject Tile script
         pressedTile = transform.FindChild("pressed").gameObject;    // find child pressed GO
         pressed = false;                                            // set as unpressed
+        ctrQueenPersonal = 0;
 
         // game management
         gameManager.totalTiles++;
@@ -43,39 +47,75 @@ public class Tile : MonoBehaviour {
 
     }
 
-   /* void OnMouseDown()
+    void OnMouseDown()
     {
         TileClicked();
-    }*/
+    }
 
 
     public void TileClicked()
     {
-        // a current tile has already been set
-        if (gameManager.currentTile != null)
+        // game mode is NOT queens..
+        if(gameManager.gameMode != 3)
         {
-            // movement is legal
-            if (CheckMovement())
+            // a current tile has already been set
+            if (gameManager.currentTile != null)
             {
-                pressed = true;                             // set as pressed
-                gameManager.currentTile = tileScript;       // set as current tile
-                gameManager.pressedTiles++;                 // increment pressed tiles ctr
-                gameManager.CheckWinCondition();            // check for win or loss
+                // movement is legal
+                if (CheckMovement())
+                {
+                    pressed = true;                             // set as pressed
+                    gameManager.currentTile = tileScript;       // set as current tile
+                    gameManager.pressedTiles++;                 // increment pressed tiles ctr
+                    gameManager.CheckWinCondition();            // check for win or loss
+                }
+            }
+            // nothing has been pressed yet SO IT'S LEGAL
+            else
+            {
+                pressed = true;                         // set as pressed
+                gameManager.currentTile = tileScript;   // set as current tile
+                gameManager.pressedTiles++;             // increment pressed tiles ctr
+                gameManager.CheckWinCondition();        // check for win or loss
             }
         }
-        // nothing has been pressed yet SO IT'S LEGAL
+        // game mode is queens..
         else
         {
-            pressed = true;                         // set as pressed
-            gameManager.currentTile = tileScript;   // set as current tile
-            gameManager.pressedTiles++;             // increment pressed tiles ctr
-            gameManager.CheckWinCondition();        // check for win or loss
+            // this tile is pressed..
+            if(pressed)
+            {
+                pressed = false;                                    // set this tile to no longer pressed
+                gameManager.queen[ctrQueenPersonal] = null;         // remove from queens array
+                gameManager.placedQueens--;                         // decrement number of placed queens
+            }
+            // not maxed queens..
+            else if(gameManager.placedQueens < gameManager.totalQueens)
+            {
+                pressed = true;             // set this tile to pressed
+                gameManager.placedQueens++; // increment number of placed queens
+                
+                // find empty place in queens array and add this tile there..
+                for(int i = 0; i < gameManager.totalQueens; i++)
+                {
+                    if (gameManager.queen[i] == null)
+                    {
+                        gameManager.queen[i] = this.tileScript;
+                        ctrQueenPersonal = i;
+                        break;
+                    }
+                }
+            }
+            gameManager.CheckWinCondition();
         }
     }
 
+    // checks to see if pressing this tile is valid movement
+    // returns true if move is valid
     private bool CheckMovement()
     {
-        bool found = false;
+        bool found = false; // tile is a valid tile to press with respect to the previous tile
+        
         // knight game mode
         if(gameManager.gameMode == 1)
         {
@@ -108,7 +148,58 @@ public class Tile : MonoBehaviour {
                 }
             }
         }
-        if(found)
+
+        // checkers game mode
+        if (gameManager.gameMode == 2)
+        {
+            // attempted placement is x +- 2
+            if (transform.position.x == gameManager.currentTile.transform.position.x + 2 ||
+                transform.position.x == gameManager.currentTile.transform.position.x - 2)
+            {
+                // attempted placement is y or y +- 2
+                if (transform.position.y == gameManager.currentTile.transform.position.y + 2 ||
+                    transform.position.y == gameManager.currentTile.transform.position.y - 2 ||
+                    transform.position.y == gameManager.currentTile.transform.position.y)
+                {
+                    if (LevelManager.tileGrid[(int)transform.position.x, (int)transform.position.y].pressed == false)
+                    {
+                        found = true;
+                    }
+                }
+            }
+            // attempted placement is transform.x
+            else if (transform.position.x == gameManager.currentTile.transform.position.x)
+            {
+                // attempted placement is y +- 2
+                if (transform.position.y == gameManager.currentTile.transform.position.y + 2 ||
+                    transform.position.y == gameManager.currentTile.transform.position.y - 2 ||
+                    transform.position.y == gameManager.currentTile.transform.position.y + 3 ||
+                    transform.position.y == gameManager.currentTile.transform.position.y - 3)
+                {
+                    if (LevelManager.tileGrid[(int)transform.position.x, (int)transform.position.y].pressed == false)
+                    {
+                        found = true;
+                    }
+                }
+            }
+            // attempted placement is x +- 3
+            else if (transform.position.x == gameManager.currentTile.transform.position.x + 3 ||
+                     transform.position.x == gameManager.currentTile.transform.position.x - 3)
+            {
+                // attempted placement is y or y +- 3
+                if (transform.position.y == gameManager.currentTile.transform.position.y + 3 ||
+                    transform.position.y == gameManager.currentTile.transform.position.y - 3 ||
+                    transform.position.y == gameManager.currentTile.transform.position.y)
+                {
+                    if (LevelManager.tileGrid[(int)transform.position.x, (int)transform.position.y].pressed == false)
+                    {
+                        found = true;
+                    }
+                }
+            }
+        }
+
+        if (found)
         {
             return true;
         }
