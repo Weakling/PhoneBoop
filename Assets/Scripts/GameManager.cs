@@ -495,6 +495,7 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    // game has ended
     public void GameOver(bool lost)
     {
         particleCurrentTile.transform.gameObject.SetActive(false);
@@ -508,7 +509,7 @@ public class GameManager : MonoBehaviour {
         }
         if(gameMode == 3)
         {
-            PlayerPrefs.SetInt("HighScoreQueens", pressedTiles);
+            PlayerPrefs.SetInt("HighScoreQueens", placedQueens);
         }
 
         if (lost)

@@ -77,4 +77,11 @@ public class MenuHandler : MonoBehaviour {
         Debug.Log("Iwork");
         SceneManager.LoadScene(1);
     }
+
+    public void ClearHighScores()
+    {
+        PlayerPrefs.SetInt("HighScoreKnights", 0);
+        PlayerPrefs.SetInt("HighScoreCheckers", 0);
+        PlayerPrefs.SetInt("HighScoreQueens", 0);
+    }
 }
