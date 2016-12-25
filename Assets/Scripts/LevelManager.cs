@@ -9,8 +9,8 @@ public class LevelManager : MonoBehaviour {
     // block placement
     [SerializeField] private int totalTileCount = 1;    // all blocks total number. Must = number of manually PLACED blocks
     public static int ctrTileCount = 0;                 // ctr for blocks
-    public static bool blocksPlaced = false;            // all blocks placed
-    public static bool isInitializedTiles = false;      // empty tiles initialzed
+    public bool blocksPlaced = false;            // all blocks placed
+    public bool isInitializedTiles = false;      // empty tiles initialzed
 
     // arrays
     private int xCtr = 0;              // array ctr x
