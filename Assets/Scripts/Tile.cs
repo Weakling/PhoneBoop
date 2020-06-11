@@ -20,7 +20,7 @@ public class Tile : MonoBehaviour {
         //
         gameManager = FindObjectOfType<GameManager>();              // find game manager
         tileScript = GetComponent<Tile>();                          // get gameObject Tile script
-        pressedTile = transform.FindChild("pressed").gameObject;    // find child pressed GO
+        pressedTile = transform.Find("pressed").gameObject;    // find child pressed GO
         pressed = false;                                            // set as unpressed
         ctrQueenPersonal = 0;
 
